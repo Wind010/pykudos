@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from data.memdb.user_repository import InMemoryDb
+from database.memdb.user_repository import InMemoryDb
 
 class DomainUser():
     """

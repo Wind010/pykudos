@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from functools import lru_cache
 
-from common.config import Settings()
+from common.config import Settings
 from dependencies.authentication import get_current_admin_user
 from models.domain.users import DomainUser
 

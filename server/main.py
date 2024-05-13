@@ -4,10 +4,13 @@ from fastapi import Depends, FastAPI
 
 #from .dependencies import get_query_token, get_token_header
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 #from .internal import admin
 from common.config import Settings
 from common.constants import DEV
+from middleware.db_session_middleware import DbSessionMiddleware
 from routers import auth, users, admin
 
 #app = FastAPI(dependencies=[Depends(get_query_token)])
@@ -19,8 +22,15 @@ app = FastAPI(debug=IS_DEVELOPMENT)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-app.include_router(auth.router)
+#app.add_middleware(HTTPSRedirectMiddleware)
 
+# app.add_middleware(
+#     TrustedHostMiddleware, allowed_hosts=["example.com", "*.example.com"]
+# )
+
+app.add_middleware(DbSessionMiddleware)
+
+app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(
     admin.router,
@@ -37,5 +47,5 @@ async def root():
 
 
 if __name__ == "__main__":
-    if settings.environment == IS_DEVELOPMENT:
+    if IS_DEVELOPMENT:
         uvicorn.run(app, host="0.0.0.0", port=8000)

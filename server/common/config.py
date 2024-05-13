@@ -7,7 +7,10 @@ class Settings(BaseSettings):
     admin_email: str
     secret_key: str
     algorithm: str
-    token_expiration_in_minutes: int
+    access_token_expire_minutes: int
+    database_type: str
+    database_connection_string: str
     environment: str = PROD
+    allowed_hosts: list
 
     model_config = SettingsConfigDict(env_file=".env")

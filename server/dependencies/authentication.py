@@ -7,7 +7,6 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-
 from common.config import Settings
 from models.domain.users import DomainUser
 
@@ -15,9 +14,7 @@ from models.common.token import Token, TokenData
 
 
 settings = Settings()
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
