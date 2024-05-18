@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 from database.database import Base
 
+
 class Item(Base):
     __tablename__ = "items"
 
@@ -13,6 +14,6 @@ class Item(Base):
     is_positive = Column(String, default=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
     date_created = Column(DateTime(timezone=True), server_default=func.now()) # Server should be UTC.
-    date_modified = Column(DateTime(timezone=True), onupdate=func.now())
+    date_modified = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    owner = relationship("User", back_populates="items")
+    owner = relationship("database.models.user.User", back_populates="items")

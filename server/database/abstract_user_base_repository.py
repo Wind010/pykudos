@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Union
+from uuid import UUID
+from database.models.user import User
 
 from database.schemas.user import UserCreate
 
@@ -18,6 +20,11 @@ class AbstractUserBaseRepository(ABC):
 
     @abstractmethod
     def get_users(self, skip: int = 0, limit: int = 100):
+        pass
+
+
+    @abstractmethod
+    def get_by_external_id(self, external_user_id: Union[UUID, str]) -> User:
         pass
 
     @abstractmethod
