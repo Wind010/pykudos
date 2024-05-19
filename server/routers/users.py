@@ -9,9 +9,10 @@ from dependencies.authentication import get_password_hash, get_current_active_us
 from database.user_datalayer import UserDatalayer
 
 from database.models.user import User as UserModel
-from database.schemas.user import User as UserSchema, UserCreate
+from database.schemas.user import UserResponse, UserCreateRequest
 from database.database import Base, SessionLocal, engine
 
+from automapper import mapper
 
 router = APIRouter()
 
@@ -32,31 +33,34 @@ def get_db(request: Request):
 
 
 
+
+
 @router.post("/users/", response_model=str, tags=["users"])
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_user(user: UserCreateRequest, db: Session = Depends(get_db)):
     crud = UserDatalayer(db)
     db_user = crud.get_by_email(email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    db_user = crud.create(user=user, hashed_password=get_password_hash(user.password))
+    db_user = mapper.to(UserModel).map(user) 
+    db_user = crud.create(user=db_user, hashed_password=get_password_hash(user.password))
 
-    return db_user.external_id
+    return str(db_user.external_id)
 
 
-@router.get("/users", response_model=list[UserSchema], tags=["users"])
+@router.get("/users", response_model=list[UserResponse], tags=["users"])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     crud = UserDatalayer(db)
-    users = crud.get_users(db, skip=skip, limit=limit)
+    users = crud.get_users(skip, limit)
     return users
 
 
 @router.get("/users/me", tags=["users"])
-def read_user_me(current_user: Annotated[UserSchema, Depends(get_current_active_user)]):
+def read_user_me(current_user: Annotated[UserResponse, Depends(get_current_active_user)]):
     return current_user
 
 
-@router.get("/users/email/{email}", response_model=UserSchema, tags=["users"])
+@router.get("/users/email/{email}", response_model=UserResponse, tags=["users"])
 def read_user_by_email(email: str, db: Session = Depends(get_db)):
     crud = UserDatalayer(db)
     db_user = crud.get_by_email(email)
@@ -65,7 +69,7 @@ def read_user_by_email(email: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.get("/users/ex_id/{external_user_id}", response_model=UserSchema, tags=["users"])
+@router.get("/users/ex_id/{external_user_id}", response_model=UserResponse, tags=["users"])
 def read_user_by_external_id(external_user_id: UUID, db: Session = Depends(get_db)):
     crud = UserDatalayer(db)
     db_user = crud.get_by_external_id(external_user_id)

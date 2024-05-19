@@ -3,7 +3,7 @@ from typing import Any, Dict, Union
 from uuid import UUID
 from database.models.user import User
 
-from database.schemas.user import UserCreate
+from database.schemas.user import UserCreateRequest
 
 class AbstractUserBaseRepository(ABC):
 
@@ -28,5 +28,5 @@ class AbstractUserBaseRepository(ABC):
         pass
 
     @abstractmethod
-    def create(self, user: UserCreate, hashed_password: str):
+    def create(self, user: UserCreateRequest, hashed_password: str):
         pass

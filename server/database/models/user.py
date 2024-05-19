@@ -14,6 +14,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     first_name = Column(String)
     last_name = Column(String)
+    username = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
@@ -23,5 +24,4 @@ class User(Base):
 
     # We just want a one way link since user is created without any items initially.
     #items = relationship("Item", back_populates="owner")
-
 

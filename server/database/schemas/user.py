@@ -1,3 +1,4 @@
+from uuid import UUID
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from database.schemas.item import Item
@@ -13,7 +14,6 @@ class UserBase(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=50)
     last_name: str = Field(..., min_length=1, max_length=100)
     username: str = Field(..., min_length=3, max_length=20)
-
     
     @field_validator('username')
     @classmethod
@@ -23,11 +23,10 @@ class UserBase(BaseModel):
         return value
     
 
-
 class User(UserBase):
     """Domain object"""
     id: int
-    external_id: str
+    external_id: UUID
     is_active: bool
     is_admin: bool
     date_created: datetime
@@ -38,7 +37,7 @@ class User(UserBase):
         orm_mode = True
 
 
-class UserCreate(UserBase):
+class UserCreateRequest(UserBase):
     password: str = Field(..., min_length=10)
 
     # Workaround for https://github.com/pydantic/pydantic/issues/7058
@@ -54,3 +53,7 @@ class UserCreate(UserBase):
         if not re_for_pw.match(p):
             raise ValueError("Invalid Password. Minimum of 10 characters, at least one uppercase letter, one lowercase letter, one number and one special character")
         return p
+
+
+class UserResponse(UserBase):
+    pass
