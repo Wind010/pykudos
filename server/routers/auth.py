@@ -20,7 +20,7 @@ INCORRECT_USERNAME_OR_PASSWORD = "Incorrect username or password"
 
 # https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/
 
-@router.post("/token")
+@router.post("/auth/token")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:

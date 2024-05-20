@@ -16,4 +16,4 @@ class Item(Base):
     date_created = Column(DateTime(timezone=True), server_default=func.now()) # Server should be UTC.
     date_modified = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    owner = relationship("database.models.user.User", back_populates="items")
+    user = relationship("User", back_populates="items")

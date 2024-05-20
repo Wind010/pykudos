@@ -11,7 +11,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from common.config import Settings
 from common.constants import DEV
 from middleware.db_session_middleware import DbSessionMiddleware
-from routers import auth, users, admin
+from routers import auth, items, users, admin
 
 #app = FastAPI(dependencies=[Depends(get_query_token)])
 
@@ -32,6 +32,7 @@ app.add_middleware(DbSessionMiddleware)
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(items.router)
 app.include_router(
     admin.router,
     prefix="/admin",

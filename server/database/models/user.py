@@ -22,6 +22,6 @@ class User(Base):
     date_modified = Column(DateTime(timezone=True),  server_default=func.now(), onupdate=func.now())
 
 
-    # We just want a one way link since user is created without any items initially.
-    #items = relationship("Item", back_populates="owner")
+    # backref="id"
+    items = relationship("Item", back_populates="user")
 

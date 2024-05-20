@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 from pydantic import BaseModel, Field
 from datetime import datetime
 
@@ -6,8 +7,7 @@ from datetime import datetime
 class ItemBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: str = Field(..., min_length=1, max_length=600)
-    is_oppertunity: bool
-
+    is_oppertunity: bool = False
 
 
 class Item(ItemBase):
@@ -22,6 +22,10 @@ class Item(ItemBase):
 
 
 class ItemCreateRequest(ItemBase):
-    pass
+    external_user_id: UUID
 
 
+class ItemResponse(ItemBase):
+    id: int
+    date_created: datetime
+    date_modified: datetime
