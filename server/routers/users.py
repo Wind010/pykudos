@@ -10,12 +10,12 @@ from database.user_datalayer import UserDatalayer
 
 from database.models.user import User as UserDto
 from database.schemas.user import UserResponse, UserCreateRequest
-from database.database import Base, SessionLocal, engine
+from database.database import Base, engine
 
 #from automapper import mapper
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
 Base.metadata.create_all(bind=engine)
@@ -26,9 +26,8 @@ USER_NOT_FOUND = "User not found"
 
 
 # Dependency
-def get_db(request: Request):
+def get_db(request: Request) -> Session:
     return request.state.db
-
 
 
 @router.post("/users/", response_model=str, tags=[USERS])

@@ -17,6 +17,9 @@ class UserDatalayer(AbstractUserBaseRepository):
     def get_by_external_id(self, external_user_id: Union[UUID, str]) -> User:
         return self.__session.query(User).filter(User.external_id == external_user_id).first()
 
+    def get_by_username(self, username: str) -> User:
+        return self.__session.query(User).filter(User.username == username).first()
+
     def get_by_email(self, email: str) -> User:
         return self.__session.query(User).filter(User.email == email).first()
 
