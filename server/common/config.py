@@ -12,5 +12,9 @@ class Settings(BaseSettings):
     database_connection_string: str
     environment: str = PROD
     allowed_hosts: list
+    github_api_url: str
+    github_pat: str
+    github_orgs: list
+    github_teams: list
 
     model_config = SettingsConfigDict(env_file=".env")

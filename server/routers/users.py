@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
+from common.config import Settings
 from dependencies.authentication import get_password_hash, get_current_active_user
 
 from database.user_datalayer import UserDatalayer
@@ -11,10 +12,13 @@ from database.user_datalayer import UserDatalayer
 from database.models.user import User as UserDto
 from database.schemas.user import UserResponse, UserCreateRequest
 from database.database import Base, engine
+import httpx
 
 #from automapper import mapper
+settings = Settings()
 
 router = APIRouter()
+github_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
@@ -25,9 +29,10 @@ EMAIL_ALREADY_REGISTERED = "Email already registered"
 USER_NOT_FOUND = "User not found"
 
 
-# Dependency
+# Dependencies
 def get_db(request: Request) -> Session:
     return request.state.db
+
 
 
 @router.post("/users/", response_model=str, tags=[USERS])
@@ -49,6 +54,20 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     crud = UserDatalayer(db)
     users = crud.get_users(skip, limit)
     return users
+
+
+@router.get("/users/github/team", tags=[USERS])
+async  def read_users_github_team():
+    url = f"{settings.github_api_url}/orgs/{settings.github_orgs[0]}/teams/{settings.github_teams[0]}/members"
+    headers = {'authorization': f"token {settings.github_pat}"}
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, headers=headers)
+        response.raise_for_status() 
+
+    team_members = response.json()
+    logins = [user["login"] for user in team_members if "login" in user]
+    return {"logins": logins}
 
 
 @router.get("/users/me", tags=[USERS])
