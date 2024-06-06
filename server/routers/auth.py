@@ -3,20 +3,23 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from models.common.token import Token
-from dependencies.authentication import create_access_token, authenticate_user
+from dependencies.authentication import create_access_token, authenticate_user, get_or_create_user
 from sqlalchemy.orm import Session
 
 from common.config import Settings
+import httpx
 
 settings = Settings()
-
 router = APIRouter()
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
+AUTH="auth"
 INCORRECT_USERNAME_OR_PASSWORD = "Incorrect username or password"
 
 
@@ -42,11 +45,11 @@ def get_db(request: Request) -> Session:
 
 # https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/
 
-@router.post("/auth/token")
+@router.post("/auth/token", tags=AUTH)
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],) -> Token:
-    user = authenticate_user(form_data.username, form_data.password)
-    if user is None:
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)) -> Token:
+    user = authenticate_user(form_data.username, form_data.password, db)
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=INCORRECT_USERNAME_OR_PASSWORD,
@@ -57,3 +60,67 @@ async def login_for_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
+
+
+# Not used:
+# @router.post("auth/login")
+# async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+#     user = authenticate_user(form_data.username, form_data.password)
+#     if not user:
+#         raise HTTPException(status_code=401, detail=INCORRECT_USERNAME_OR_PASSWORD)
+
+#     if user:
+#         response = RedirectResponse(url="/dashboard", status_code=303)
+#         access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
+#         access_token = create_access_token(
+#             data={"sub": user.username}, expires_delta=access_token_expires
+#         )
+#         response.set_cookie(key="access_token", value=access_token, httponly=True)
+#         return response
+
+
+
+@router.get("/auth/github", tags=AUTH)
+async def github_login(tags=AUTH):
+    redirect_uri = f"{settings.host_url}/auth/github/callback"
+    return RedirectResponse(
+        f"{settings.github_url}/login/oauth/authorize?client_id={settings.github_client_id}&redirect_uri={redirect_uri}&scope=read:user"
+    )
+
+
+@router.get("/auth/github/callback", tags=AUTH)
+async def github_callback(request: Request, code: str, db: Session = Depends(get_db)):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            settings.github_url + "/login/oauth/access_token",
+            headers={"Accept": "application/json"},
+            data={
+                "client_id": settings.github_client_id,
+                "client_secret": settings.github_client_secret,
+                "code": code
+            },
+        )
+        token_data = response.json()
+        access_token = token_data.get("access_token")
+        
+        if not access_token:
+            raise HTTPException(status_code=400, detail="OAuth token missing")
+        
+        user_response = await client.get(
+            f"{settings.github_url}/api/v3/user", headers={"Authorization": f"Bearer {access_token}"}
+        )
+        user_data = user_response.json()
+        
+        username = user_data.get("login")
+        email = user_data.get("email")
+        user = get_or_create_user(db, username, email)
+
+        access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
+        access_token = create_access_token(
+            data={"sub": username}, expires_delta=access_token_expires
+        )
+        #return Token(access_token=access_token, token_type="bearer")
+
+        response = RedirectResponse(url="/dashboard", status_code=303)
+        response.set_cookie(key="access_token", value=access_token, httponly=True)
+        return response

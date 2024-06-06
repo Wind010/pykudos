@@ -42,7 +42,6 @@ def create_item(item: ItemCreateRequest, db: Session = Depends(get_db)):
     return item_dto.id
 
 
-
 @router.get("/items/{external_user_id}", response_model=list[ItemResponse], tags=[ITEM])
 async def read_items(external_user_id: UUID, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     #TODO:  Validate token

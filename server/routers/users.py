@@ -34,7 +34,6 @@ def get_db(request: Request) -> Session:
     return request.state.db
 
 
-
 @router.post("/users/", response_model=str, tags=[USERS])
 def create_user(user: UserCreateRequest, db: Session = Depends(get_db)):
     crud = UserDatalayer(db)
@@ -58,7 +57,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 @router.get("/users/github/team", tags=[USERS])
 async  def read_users_github_team():
-    url = f"{settings.github_api_url}/orgs/{settings.github_orgs[0]}/teams/{settings.github_teams[0]}/members"
+    url = f"{settings.github_url}/api/v3/orgs/{settings.github_orgs[0]}/teams/{settings.github_teams[0]}/members"
     headers = {'authorization': f"token {settings.github_pat}"}
 
     async with httpx.AsyncClient() as client:

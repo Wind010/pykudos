@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import Depends, FastAPI
-
+from fastapi.templating import Jinja2Templates
 
 #from .dependencies import get_query_token, get_token_header
 from fastapi.security import OAuth2PasswordBearer
@@ -11,7 +11,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from common.config import Settings
 from common.constants import DEV
 from middleware.db_session_middleware import DbSessionMiddleware
-from routers import auth, items, users, admin
+from routers import admin, auth, items, pages, users
 
 #app = FastAPI(dependencies=[Depends(get_query_token)])
 
@@ -33,6 +33,7 @@ app.add_middleware(DbSessionMiddleware)
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(items.router)
+app.include_router(pages.router)
 app.include_router(
     admin.router,
     prefix="/admin",
@@ -41,10 +42,7 @@ app.include_router(
     responses={418: {"description": "I'm a teapot"}},
 )
 
-
-@app.get("/")
-async def root():
-    return {"message": "Root!"}
+templates = Jinja2Templates(directory="templates")
 
 
 if __name__ == "__main__":
