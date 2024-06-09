@@ -9,8 +9,12 @@ function getAccessToken() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    console.log('Code present', code);
-
+    
+    if (!code) {
+        return;
+    }
+    
+    console.log(`Code present: ${code}`);
     fetch(`${BASE_API_URL}/auth/github/callback?code=${code}`, {
         credentials: "include"
     })
@@ -18,14 +22,22 @@ function getAccessToken() {
     .then(data => setCookie('access_token', data.access_token, 7))
     .catch(err => console.error(err));
     
+    waitForAccessToken();
+}
 
-    access_token = getCookie('access_token');
-    console.log(access_token);
-
-    if (access_token) {
-        redirect();
-    }
+function waitForAccessToken() {
+    setInterval(function() {
+        access_token = getCookie('access_token');
+        console.log(`Access token: ${access_token}`);
+    
+        if (access_token) {
+            redirect();
+        }
+    
+      }, 1000);
 }
 
 
+// Once we hit the callback URI, the user is prompted to authorize the app.
+// User gets redirected back to login page with code=xxx.
 window.onload = getAccessToken()
