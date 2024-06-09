@@ -23,5 +23,6 @@ class User(Base):
 
 
     # backref="id"
-    items = relationship("Item", back_populates="user")
+    source_items = relationship("Item", foreign_keys="[Item.source_user_id]", back_populates="source_user")
+    target_items = relationship("Item", foreign_keys="[Item.target_user_id]", back_populates="target_user")
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kudos</title>
+    <link href="https://starbucks.com/next_static/icons/favicon-32x32.png" rel="icon">
+
+    <link rel="stylesheet" href="css/style.css">
+    <!-- <link rel="stylesheet" href="css/alert.css"> -->
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+        integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="flex">
+        <div class="centering">
+            <div class="container">
+                <h1>Who do you want to recognize?</h1>
+                <p></p>
+                
+                <form id="kudo-form" action="" method="POST" onsubmit="submitForm('kudo-form')">
+                    <label for="member">Team Member to Acknowledge</label>
+                    <input type="list" id="member" name="member" list="members" placeholder="Team Member to Acknowledge" required>
+                    <datalist id="members">
+                    </datalist>
+
+                    <label for="isOpportunity">Is Opportunity</label>
+                    <input type="checkbox" id="isOpportunity" name="isOpportunity">
+    
+                    <label for="kudos">Kudos</label>
+                    <textarea id="kudos" name="kudos" placeholder="Give kudos to the team member you want to acknowledge" required></textarea>
+
+                    <!-- <input type="submit" value="Submit" id="kudo-form-button"> -->
+                    <input type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer">
+            </br>
+            <p onclick="cheer()">Be excellent to each other</audio>
+            <span onclick="cheer()">💖</span>
+        </div>
+    </div>    
+</body>
+
+<script src="js/common.js" defer></script>
+<script src="js/effects.js" defer></script>
+<!-- <script src="js/alert.js" defer></script> -->
+<script src="js/kudos.js" defer></script>
+</html>

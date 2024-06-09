@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class ItemBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=200)
+    #title: str = Field(..., min_length=1, max_length=200)
     description: str = Field(..., min_length=1, max_length=600)
     is_oppertunity: bool = False
 
@@ -22,7 +22,9 @@ class Item(ItemBase):
 
 
 class ItemCreateRequest(ItemBase):
-    external_user_id: UUID
+    #external_user_id: UUID
+    username: str
+
 
 
 class ItemResponse(ItemBase):

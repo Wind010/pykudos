@@ -12,6 +12,8 @@ from database.user_datalayer import UserDatalayer
 from database.models.user import User as UserDto
 from database.schemas.user import UserResponse, UserCreateRequest
 from database.database import Base, engine
+from models.common.token import TokenData
+
 import httpx
 
 #from automapper import mapper
@@ -42,7 +44,7 @@ def create_user(user: UserCreateRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=EMAIL_ALREADY_REGISTERED)
     
     #user_dto = mapper.to(UserDto).map(user)
-    user_dto = UserDto(**user.model_dump(exclude_none='password'))
+    user_dto = UserDto(**user.model_dump(exclude='password'))
     user_dto = crud.create(user=user_dto, hashed_password=get_password_hash(user.password))
 
     return str(user_dto.external_id)
@@ -56,16 +58,16 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 
 @router.get("/users/github/team", tags=[USERS])
-async  def read_users_github_team():
+async  def read_users_github_team(tokenData: TokenData = Depends(get_current_active_user)):
     url = f"{settings.github_url}/api/v3/orgs/{settings.github_orgs[0]}/teams/{settings.github_teams[0]}/members"
     headers = {'authorization': f"token {settings.github_pat}"}
 
     async with httpx.AsyncClient() as client:
         response = await client.get(url, headers=headers)
-        response.raise_for_status() 
+        response.raise_for_status()
 
     team_members = response.json()
-    logins = [user["login"] for user in team_members if "login" in user]
+    logins = [user["login"] for user in team_members if "login" in user and user["login"] != tokenData.username]
     return {"logins": logins}
 
 

@@ -6,6 +6,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+
 
 #from .internal import admin
 from common.config import Settings
@@ -22,13 +24,18 @@ app = FastAPI(debug=IS_DEVELOPMENT)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
-#app.add_middleware(HTTPSRedirectMiddleware)
-
-# app.add_middleware(
-#     TrustedHostMiddleware, allowed_hosts=["example.com", "*.example.com"]
-# )
-
+app.add_middleware(
+    TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(DbSessionMiddleware)
+#app.add_middleware(HTTPSRedirectMiddleware)
 
 app.include_router(auth.router)
 app.include_router(users.router)

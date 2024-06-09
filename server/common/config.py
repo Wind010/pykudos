@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     database_connection_string: str
     environment: str = PROD
     allowed_hosts: list
+    allowed_origins: list
+    server_side_render: bool
     github_url: str
     github_pat: str
     github_orgs: list
