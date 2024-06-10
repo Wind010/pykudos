@@ -54,9 +54,8 @@ def create_item(item: ItemCreateRequest, db: Session = Depends(get_db)
 
 
 @router.get("/items/{external_user_id}", response_model=list[ItemResponse], tags=[ITEM])
-async def read_items(external_user_id: UUID, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+async def read_items_by_exId(external_user_id: UUID, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
                     , token: TokenData = Depends(get_current_active_user)):
-    #TODO:  Validate token
     user_db, item_db = UserDatalayer(db), ItemDatalayer(db)
 
     #user_dto = user_db.get_by_external_id(item.external_user_id)
@@ -66,8 +65,32 @@ async def read_items(external_user_id: UUID, skip: int = 0, limit: int = 100, db
         raise HTTPException(status_code=400, detail="User not found")
 
     # ItemResponse is the model it will map to.
-    return item_db.get(user_dto.id, skip, limit)
+    return item_db.get_by_source_user_id(user_dto.id, skip, limit)
 
 
+@router.get("/items/sent", response_model=list[ItemResponse], tags=[ITEM])
+async def read_items_sent(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+                    , token: TokenData = Depends(get_current_active_user)):
+    
+    user_db, item_db = UserDatalayer(db), ItemDatalayer(db)
+    user_dto = user_db.get_by_username(token.username)
+    
+    if not user_dto:
+        raise HTTPException(status_code=400, detail="User not found")
+
+    # ItemResponse is the model it will map to.
+    return item_db.get_by_source_user_id(user_dto.id, skip, limit)
 
 
+@router.get("/items/recieved", response_model=list[ItemResponse], tags=[ITEM])
+async def read_items_received(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+                    , token: TokenData = Depends(get_current_active_user)):
+    
+    user_db, item_db = UserDatalayer(db), ItemDatalayer(db)
+    user_dto = user_db.get_by_username(token.username)
+    
+    if not user_dto:
+        raise HTTPException(status_code=400, detail="User not found")
+
+    # ItemResponse is the model it will map to.
+    return item_db.get_by_target_user_id(user_dto.id, skip, limit)

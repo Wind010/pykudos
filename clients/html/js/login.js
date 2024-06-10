@@ -37,6 +37,13 @@ function waitForAccessToken() {
       }, 1000);
 }
 
+function notSupport() {
+    alert('Not supported.')
+}
+
+document.getElementById('github').addEventListener('click', getAccessToken)
+document.getElementById('facebook').addEventListener('click', notSupport)
+document.getElementById('twitter').addEventListener('click', notSupport)
 
 // Once we hit the callback URI, the user is prompted to authorize the app.
 // User gets redirected back to login page with code=xxx.

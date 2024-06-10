@@ -1,0 +1,66 @@
+@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+
+h2 {
+    font-family: 'Arial';
+}
+
+.btn {
+    font-size: 20px;
+    width: 200px;
+    margin: 5px auto;
+    border-radius: 7px;
+    padding: 0.5em 0 0.5em 0;
+    border: none;
+}
+
+.fa {
+    font-size: 30px;
+    margin: 0;
+    float: left;
+    padding-left: 0.5em;
+}
+
+.box {
+    width: 300px;
+    padding: 0px;
+    position: absolute;
+    top: 25%;
+    left: 40%;
+    margin: 100px;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+.facebookBtn {
+    background: rgb(17, 68, 120);
+    color: white;
+}
+.facebookBtn:hover {
+    background: rgb(0, 91, 183);
+}
+
+.twitterBtn {
+    background: rgb(33, 141, 250);
+    color: white;
+    content:"𝕏";
+}
+.twitterBtn:hover {
+    background: rgb(75, 154, 228);
+}
+
+
+.githubBtn {
+    background: rgb(36, 41, 46);
+    color: white;
+    position: relative;
+    transition: transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.githubBtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0.3px 0.3px 4px black;
+}
