@@ -98,6 +98,7 @@ header ul.navigation {
 
 
 /* Form Styling */
+
 input[type=text], 
 input[type=list], 
 select 
@@ -127,6 +128,13 @@ textarea {
     font-family: 'Space Mono', monospace;
 }
 
+input:focus, textarea:focus {
+    outline: none !important;
+    border:1px solid rgb(182, 169, 169);
+    box-shadow: 0 0 15px #fa943a;
+}
+
+
 input[type=email],
 select,
 textarea {
@@ -146,11 +154,26 @@ input[type=checkbox]
     border: 1px solid #ccc;
     margin-top: 6px;
     margin-bottom: 16px;
-    accent-color: #e54433;
+    accent-color: #df842f;
     background-color: lightgoldenrodyellow;
     font-family: 'Space Mono', monospace;
     transform: scale(1.5);
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+         appearance: none;
+
+    border-radius: 0;
+    width: 15px;
+    height: 15px;
+
 }
+
+
+input[type="checkbox"]:checked {
+    background-color: #df842f;
+  }
+
 
 input[type=submit] {
     display: block;
@@ -161,6 +184,8 @@ input[type=submit] {
     color: white;
     cursor: pointer;
 }
+
+
 
 input[type=submit]:hover {
     background-color: #f3b271;
@@ -190,7 +215,7 @@ label {
 
 .container {
     border-radius: 0px;
-    background-color: #dac8ff;
+    background-color: #c8d8ff;
     padding: 40px;
 }
 
@@ -201,4 +226,5 @@ label {
     background-color: #f4aea9;
     text-align: center;
     font-weight: 600;
+    color: white;
 }
