@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kudos Dashboard</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <h2>Kudos Received</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>Description</th>
+                <!-- <th>Is Oppertunity</th> -->
+                <th>CreateDate</th>
+            </tr>
+        </thead>
+        <tbody id="kudos-received">
+        </tbody>
+    </table>
+
+    <label id="labelFilterMember" for="filter-member">Filter by Receiver</label>
+    <input type="list" id="member" name="member" list="members" placeholder="Filter by member" required>
+    <datalist id="members">
+    </datalist>
+    <input type="checkbox" id="senderReceiver-checkbox" onchange="toggleSentReceived()">
+    <label id="labelSenderReceiver" for="senderReceiver-checkbox">Show Recieved</label>
+
+
+    <script src="js/dashboard.js" defer></script>
+</body>
+</html>

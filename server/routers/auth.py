@@ -83,7 +83,7 @@ async def get_github_access_token(request: Request, code: str, db: Session) -> s
 
 # https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/
 
-@router.post("/auth/token", tags=AUTH)
+@router.post("/auth/token", tags=[AUTH])
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)) -> Token:
     user = authenticate_user(form_data.username, form_data.password, db)
@@ -100,7 +100,7 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/auth/github", tags=AUTH)
+@router.get("/auth/github", tags=[AUTH])
 async def github_login():
     redirect_uri = f"{settings.host_url}/auth/github/callback"
     redirect_uri = "http://127.0.0.1:5500/login.html"
@@ -109,7 +109,7 @@ async def github_login():
     )
 
 
-@router.get("/auth/github/callback", tags=AUTH)
+@router.get("/auth/github/callback", tags=[AUTH])
 async def github_callback(request: Request, code: str, db: Session = Depends(get_db)):
     access_token: str = await get_github_access_token(request, code, db)
     if settings.server_side_render:
